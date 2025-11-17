@@ -2,6 +2,24 @@
 
 这是一个使用MFC (Microsoft Foundation Classes) 实现的3D球体渲染程序，具有Gouraud光照模型和Z-Buffer消隐算法。专为Visual Studio 2022设计。
 
+## 📚 文档导航
+
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - 快速参考卡（推荐新手阅读）
+- **[USAGE.md](USAGE.md)** - 详细使用指南
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - 故障排除指南
+- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - 项目完成总结
+
+## ⚡ 快速开始
+
+1. 打开 **Visual Studio 2022**
+2. 选择 **文件 > 打开 > 项目/解决方案**
+3. 打开 `SphereGouraud.sln`
+4. 按 **F5** 运行
+
+**控制方式**:
+- ← → ↑ ↓ 方向键旋转球体
+- 点击"动画"按钮开始/停止自动旋转
+
 ## 功能特性
 
 1. **坐标系 (Coordinate System)**: 
