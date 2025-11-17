@@ -280,36 +280,43 @@ void CSphereGouraudDlg::DrawTriangleGouraud(CDC* pDC, const Vertex& v0, const Ve
     Vector3 edge1 = v1.transformedPos - v0.transformedPos;
     Vector3 edge2 = v2.transformedPos - v0.transformedPos;
     Vector3 normal = edge1.cross(edge2);
-    
+
     Vector3 viewDir(0, 0, 1);
     if (normal.dot(viewDir) <= 0) return;
-    
+
     // Bounding box
     int minX = std::min(v0.screenX, std::min(v1.screenX, v2.screenX));
     int maxX = std::max(v0.screenX, std::max(v1.screenX, v2.screenX));
     int minY = std::min(v0.screenY, std::min(v1.screenY, v2.screenY));
     int maxY = std::max(v0.screenY, std::max(v1.screenY, v2.screenY));
-    
+
     minX = std::max(0, minX);
     maxX = std::min(m_zBufferWidth - 1, maxX);
     minY = std::max(0, minY);
     maxY = std::min(m_zBufferHeight - 1, maxY);
-    
+
+    const double DEPTH_BIAS = 1e-4; // Small depth bias to prevent Z-fighting
+
     // Rasterize
     for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
             double w0, w1, w2;
-            GetBarycentricCoords(x, y, v0.screenX, v0.screenY, v1.screenX, v1.screenY,
-                               v2.screenX, v2.screenY, w0, w1, w2);
-            
-            if (w0 >= 0.0 && w1 >= 0.0 && w2 >= 0.0) {  // Strict triangle test
+            GetBarycentricCoords(x, y,
+                                 v0.screenX, v0.screenY,
+                                 v1.screenX, v1.screenY,
+                                 v2.screenX, v2.screenY,
+                                 w0, w1, w2);
+
+            // Strict triangle interior test to prevent exterior pixels
+            if (w0 >= 0.0 && w1 >= 0.0 && w2 >= 0.0) {
                 double z = v0.screenZ * w0 + v1.screenZ * w1 + v2.screenZ * w2;
-                
+                z -= DEPTH_BIAS; // Give polygon slight depth advantage
+
                 int bufferIndex = y * m_zBufferWidth + x;
-                // Standard Z-buffer: keep pixel if it's closer (smaller Z value)
-                if (bufferIndex >= 0 && bufferIndex < (int)m_zBuffer.size() && z < m_zBuffer[bufferIndex]) {
+                if (bufferIndex >= 0 && bufferIndex < (int)m_zBuffer.size() &&
+                    z < m_zBuffer[bufferIndex]) {
                     m_zBuffer[bufferIndex] = z;
-                    
+
                     COLORREF color = InterpolateColor(v0.color, v1.color, v2.color, w0, w1, w2);
                     pDC->SetPixel(x, y, color);
                 }
