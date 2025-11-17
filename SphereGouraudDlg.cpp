@@ -296,22 +296,12 @@ void CSphereGouraudDlg::DrawTriangleGouraud(CDC* pDC, const Vertex& v0, const Ve
     minY = std::max(0, minY);
     maxY = std::min(m_zBufferHeight - 1, maxY);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     const double DEPTH_BIAS = 1e-4; // Small depth bias to prevent Z-fighting
-=======
-    const double DEPTH_BIAS = 1e-3; // Define a small bias to prevent artifacts
->>>>>>> Stashed changes
-=======
-    const double DEPTH_BIAS = 1e-3; // Define a small bias to prevent artifacts
->>>>>>> Stashed changes
 
     // Rasterize
     for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
             double w0, w1, w2;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
             GetBarycentricCoords(x, y,
                                  v0.screenX, v0.screenY,
                                  v1.screenX, v1.screenY,
@@ -322,26 +312,6 @@ void CSphereGouraudDlg::DrawTriangleGouraud(CDC* pDC, const Vertex& v0, const Ve
             if (w0 >= 0.0 && w1 >= 0.0 && w2 >= 0.0) {
                 double z = v0.screenZ * w0 + v1.screenZ * w1 + v2.screenZ * w2;
                 z -= DEPTH_BIAS; // Give polygon slight depth advantage
-=======
-            GetBarycentricCoords(x, y, v0.screenX, v0.screenY, v1.screenX, v1.screenY,
-                v2.screenX, v2.screenY, w0, w1, w2);
-
-            if (w0 >= -1e-6 && w1 >= -1e-6 && w2 >= -1e-6) {  // Loosen the triangle test slightly for edges
-                double z = v0.screenZ * w0 + v1.screenZ * w1 + v2.screenZ * w2;
-
-                // Apply depth bias to give polygon faces depth priority
-                z -= DEPTH_BIAS;
->>>>>>> Stashed changes
-=======
-            GetBarycentricCoords(x, y, v0.screenX, v0.screenY, v1.screenX, v1.screenY,
-                v2.screenX, v2.screenY, w0, w1, w2);
-
-            if (w0 >= -1e-6 && w1 >= -1e-6 && w2 >= -1e-6) {  // Loosen the triangle test slightly for edges
-                double z = v0.screenZ * w0 + v1.screenZ * w1 + v2.screenZ * w2;
-
-                // Apply depth bias to give polygon faces depth priority
-                z -= DEPTH_BIAS;
->>>>>>> Stashed changes
 
                 int bufferIndex = y * m_zBufferWidth + x;
                 if (bufferIndex >= 0 && bufferIndex < (int)m_zBuffer.size() &&
