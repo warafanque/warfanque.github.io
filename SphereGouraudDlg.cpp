@@ -241,14 +241,23 @@ void CSphereGouraudDlg::TransformVertices(int width, int height) {
 // Barycentric coordinates
 void GetBarycentricCoords(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3,
                           double& w1, double& w2, double& w3) {
-    double denom = (double)((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
-    if (fabs(denom) < 0.0001) {
+    // Convert all to double for precise floating point calculations
+    double dX = (double)x;
+    double dY = (double)y;
+    double dX1 = (double)x1, dY1 = (double)y1;
+    double dX2 = (double)x2, dY2 = (double)y2;
+    double dX3 = (double)x3, dY3 = (double)y3;
+    
+    double denom = (dY2 - dY3) * (dX1 - dX3) + (dX3 - dX2) * (dY1 - dY3);
+    
+    if (fabs(denom) < 1e-6) {  // Use smaller epsilon for better precision
         w1 = w2 = w3 = 0;
         return;
     }
     
-    w1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denom;
-    w2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denom;
+    // Compute barycentric coordinates with proper floating point arithmetic
+    w1 = ((dY2 - dY3) * (dX - dX3) + (dX3 - dX2) * (dY - dY3)) / denom;
+    w2 = ((dY3 - dY1) * (dX - dX3) + (dX1 - dX3) * (dY - dY3)) / denom;
     w3 = 1.0 - w1 - w2;
 }
 
