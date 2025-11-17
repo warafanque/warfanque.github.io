@@ -222,7 +222,7 @@ void CSphereGouraudDlg::TransformVertices(int width, int height) {
         
         v.screenX = centerX + (int)v.transformedPos.x;
         v.screenY = centerY - (int)v.transformedPos.y;
-        v.screenZ = v.transformedPos.z;
+        v.screenZ = -v.transformedPos.z;  // Negate Z to convert to depth (distance from viewer)
     }
 }
 
@@ -285,8 +285,8 @@ void CSphereGouraudDlg::DrawTriangleGouraud(CDC* pDC, const Vertex& v0, const Ve
                 double z = v0.screenZ * w0 + v1.screenZ * w1 + v2.screenZ * w2;
                 
                 int bufferIndex = y * m_zBufferWidth + x;
-                // Simple Z-test without epsilon (ambient light prevents pure black)
-                if (bufferIndex >= 0 && bufferIndex < (int)m_zBuffer.size() && z > m_zBuffer[bufferIndex]) {
+                // Standard Z-buffer: keep pixel if it's closer (smaller Z value)
+                if (bufferIndex >= 0 && bufferIndex < (int)m_zBuffer.size() && z < m_zBuffer[bufferIndex]) {
                     m_zBuffer[bufferIndex] = z;
                     
                     COLORREF color = InterpolateColor(v0.color, v1.color, v2.color, w0, w1, w2);
@@ -304,7 +304,7 @@ void CSphereGouraudDlg::RenderScene(CDC* pDC, int width, int height) {
         m_zBufferHeight = height;
         m_zBuffer.resize(width * height);
     }
-    std::fill(m_zBuffer.begin(), m_zBuffer.end(), -10000.0);
+    std::fill(m_zBuffer.begin(), m_zBuffer.end(), 10000.0);  // Initialize to far distance (large positive)
     
     TransformVertices(width, height);
     
