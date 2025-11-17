@@ -1,6 +1,6 @@
 # 球体Gouraud光照模型实验
 
-这是一个使用C++和Win32 API实现的3D球体渲染程序，具有Gouraud光照模型和Z-Buffer消隐算法。
+这是一个使用MFC (Microsoft Foundation Classes) 实现的3D球体渲染程序，具有Gouraud光照模型和Z-Buffer消隐算法。专为Visual Studio 2022设计。
 
 ## 功能特性
 
@@ -38,30 +38,34 @@
    - 工具栏"动画"按钮控制
    - 点击播放/停止球体自动旋转
 
+## 系统要求
+
+- **Visual Studio 2022** (或更高版本)
+- **MFC (Microsoft Foundation Classes)** - 需要在Visual Studio安装程序中选择"使用C++的桌面开发"工作负载
+- **Windows 10 SDK**
+
 ## 构建说明
 
-### Windows + MinGW/GCC
-```bash
-make
-```
+### 在Visual Studio 2022中打开和构建
 
-### Windows + Visual Studio
-使用Visual Studio命令提示符运行：
-```bash
-build.bat
-```
+1. 启动 **Visual Studio 2022**
+2. 点击"打开项目或解决方案"
+3. 浏览到项目目录，选择 `SphereGouraud.sln`
+4. 在工具栏中选择配置（Debug 或 Release）和平台（x86 或 x64）
+5. 按 **F5** 运行，或按 **Ctrl+Shift+B** 构建
 
-或者使用cl编译器直接编译：
-```bash
-cl /EHsc /O2 /W3 /D_UNICODE /DUNICODE sphere_gouraud.cpp /link user32.lib gdi32.lib comctl32.lib /SUBSYSTEM:WINDOWS /OUT:sphere_gouraud.exe
-```
+### 注意事项
+
+- 如果编译时提示"未安装MFC"，请在Visual Studio安装程序中添加"使用C++的桌面开发"工作负载
+- 如果遇到中文资源文件问题，请确保Visual Studio的代码页设置正确
 
 ## 运行
 
-编译后运行生成的可执行文件：
-```bash
-sphere_gouraud.exe
-```
+构建成功后，可执行文件位于：
+- Debug 版本: `Debug/SphereGouraud.exe` 或 `x64/Debug/SphereGouraud.exe`
+- Release 版本: `Release/SphereGouraud.exe` 或 `x64/Release/SphereGouraud.exe`
+
+直接运行可执行文件即可。
 
 ## 技术实现
 
@@ -90,17 +94,35 @@ sphere_gouraud.exe
 ### 背面剔除
 通过叉积计算三角形法向量，只渲染面向观察者的三角形。
 
-## 依赖
+## 项目结构
 
-- Windows SDK (for Win32 API)
-- C++11或更高版本
+```
+.
+├── SphereGouraud.sln          - Visual Studio 解决方案文件
+├── SphereGouraud.vcxproj      - Visual Studio 项目文件
+├── SphereGouraud.h            - 应用程序主头文件
+├── SphereGouraud.cpp          - 应用程序主实现
+├── SphereGouraudDlg.h         - 对话框头文件
+├── SphereGouraudDlg.cpp       - 对话框实现（包含所有渲染逻辑）
+├── SphereGouraud.rc           - 资源文件
+├── resource.h                 - 资源ID定义
+├── pch.h/pch.cpp              - 预编译头文件
+├── framework.h                - MFC框架头文件
+├── targetver.h                - Windows SDK版本定义
+├── res/                       - 资源文件夹
+│   ├── SphereGouraud.ico      - 应用程序图标
+│   └── SphereGouraud.rc2      - 手动编辑的资源
+└── README.md                  - 本文档
+```
 
-## 文件说明
+## 核心文件说明
 
-- `sphere_gouraud.cpp`: 主程序源代码
-- `Makefile`: GCC/MinGW构建脚本
-- `build.bat`: Visual Studio构建脚本
-- `README.md`: 本文档
+- **SphereGouraudDlg.cpp**: 包含所有核心渲染逻辑
+  - `CreateSphereMesh()`: 生成球体网格
+  - `TransformVertices()`: 顶点变换
+  - `CalculateVertexColor()`: Gouraud着色计算
+  - `DrawTriangleGouraud()`: 三角形光栅化
+  - `RenderScene()`: 场景渲染主函数
 
 ## 许可
 
